@@ -5,13 +5,15 @@ import { Link, useParams } from "react-router-dom";
 import { GoHeart, GoHeartFill } from "react-icons/go";
 import { useEffect, useMemo, useState } from "react";
 import { getBookDetailApi } from "../services/bookService";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BounceLoader } from "react-spinners";
+import { addBook } from "../core/slices/cartSlice";
 
 export default function DetailPage() {
   const { bookId } = useParams();
   const formattedBookId = bookId.split(" ")[0];
 
+  const dispatch = useDispatch();
   const { books, loading } = useSelector((state) => state.books);
 
   const [fallbackBook, setFallbackBook] = useState(null); // store에 없을 시 fallback용
@@ -20,6 +22,10 @@ export default function DetailPage() {
   const findBook = useMemo(() => {
     return books.find((book) => book.isbn === formattedBookId);
   }, [books, formattedBookId]);
+
+  const handleAddCart = () => {
+    dispatch(addBook(bookDetail));
+  };
 
   // 도서 데이터 로드
   useEffect(() => {
@@ -129,7 +135,10 @@ export default function DetailPage() {
                   {bookDetail?.contents}…
                 </div>
                 <div className="mt-auto flex gap-2">
-                  <div className="cursor-pointer flex border-1 items-center justify-center h-8 sm:h-9 w-full shrink">
+                  <div
+                    onClick={handleAddCart}
+                    className="cursor-pointer flex border-1 items-center justify-center h-8 sm:h-9 w-full shrink"
+                  >
                     <span className="text-sm mr-1">장바구니에 담기</span>
                     <CiShoppingBasket size={24} />
                   </div>
