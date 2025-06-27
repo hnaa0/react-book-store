@@ -1,14 +1,18 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import MainLayout from "../components/layouts/MainLayout";
 import { SlQuestion } from "react-icons/sl";
 import { Tooltip } from "react-tooltip";
 import { useDispatch, useSelector } from "react-redux";
 import { FiMinus, FiPlus } from "react-icons/fi";
+import { FaExclamation } from "react-icons/fa6";
 import { addBook, removeBook } from "../core/slices/cartSlice";
+import toast from "react-hot-toast";
 
 export default function CartPage() {
   const dispatch = useDispatch();
   const { totalCount, cart } = useSelector((state) => state.cart);
+
+  const navigate = useNavigate();
 
   const DELIVERY_FEE = 3000;
   const DELIVERY_FEE_STANDARD = 50000;
@@ -115,14 +119,35 @@ export default function CartPage() {
             </div>
           </div>
         </div>
-        <Link to={"/order"}>
-          <button
-            disabled={totalPrice === 0}
-            className="w-full border-1 border-lime-400 hover:border-black hover:bg-lime-400 py-1 text-center cursor-pointer"
-          >
-            주문하기
-          </button>
-        </Link>
+        <button
+          onClick={() => {
+            if (totalPrice === 0) {
+              toast.custom((t) => (
+                <div
+                  className={`${
+                    t.visible ? "animate-enter" : "animate-leave"
+                  } w-fit bg-white shadow-lg rounded-full pointer-events-auto flex ring-1 ring-sky-400 ring-opacity-5`}
+                >
+                  <div className="p-4">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 mr-1">
+                        <FaExclamation className="text-sky-400" />
+                      </div>
+                      <div className="text-sm">
+                        <p>장바구니가 비어있습니다.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ));
+            } else {
+              navigate("/order");
+            }
+          }}
+          className="w-full border-1 border-lime-400 hover:border-black hover:bg-lime-400 py-1 text-center cursor-pointer"
+        >
+          주문하기
+        </button>
       </div>
     </MainLayout>
   );

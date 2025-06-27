@@ -8,6 +8,7 @@ import { getBookDetailApi } from "../services/bookService";
 import { useDispatch, useSelector } from "react-redux";
 import { BounceLoader } from "react-spinners";
 import { addBook } from "../core/slices/cartSlice";
+import toast from "react-hot-toast";
 
 export default function DetailPage() {
   const { bookId } = useParams();
@@ -25,6 +26,31 @@ export default function DetailPage() {
 
   const handleAddCart = () => {
     dispatch(addBook(bookDetail));
+
+    toast.custom((t) => (
+      <div
+        className={`${
+          t.visible ? "animate-enter" : "animate-leave"
+        } max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-sky-400 ring-opacity-5`}
+      >
+        <div className="flex-1 w-0 p-4">
+          <div className="flex items-center">
+            <div className="flex-shrink-0 mr-2">
+              <CiShoppingBasket size={24} />
+            </div>
+            <span className="text-sm">장바구니에 상품이 추가되었습니다</span>
+          </div>
+        </div>
+        <div className="flex border-l border-gray-200">
+          <Link
+            to="/cart"
+            className="cursor-pointer w-full border border-transparent rounded-none rounded-r-lg p-3 flex items-center justify-center text-sm hover:text-sky-500 focus:outline-none"
+          >
+            <div>장바구니로 이동</div>
+          </Link>
+        </div>
+      </div>
+    ));
   };
 
   // 도서 데이터 로드
