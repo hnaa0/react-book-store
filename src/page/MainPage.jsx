@@ -61,7 +61,7 @@ export default function MainPage() {
         />
       </div>
       <div className="py-10">
-        <ItemGrid />
+        <ItemGrid data={books} />
         {isSearch && books.length === 0 && (
           <div className="py-20 flex flex-col items-center">
             <CiFaceFrown size={32} color="oklch(84.1% 0.238 128.85)" />

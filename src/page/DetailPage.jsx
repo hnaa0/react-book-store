@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BounceLoader } from "react-spinners";
 import { addBook } from "../core/slices/cartSlice";
 import toast from "react-hot-toast";
+import { addLike, removeLike } from "../core/slices/likeSlice";
 
 export default function DetailPage() {
   const { bookId } = useParams();
@@ -16,6 +17,7 @@ export default function DetailPage() {
 
   const dispatch = useDispatch();
   const { books, loading } = useSelector((state) => state.books);
+  const { items } = useSelector((state) => state.like);
 
   const [fallbackBook, setFallbackBook] = useState(null); // store에 없을 시 fallback용
   const [localLoading, setLocalLoading] = useState(false);
@@ -51,6 +53,14 @@ export default function DetailPage() {
         </div>
       </div>
     ));
+  };
+
+  const handleAddLike = () => {
+    if (items[bookDetail.isbn]) {
+      dispatch(removeLike(bookDetail));
+    } else {
+      dispatch(addLike(bookDetail));
+    }
   };
 
   // 도서 데이터 로드
@@ -161,6 +171,7 @@ export default function DetailPage() {
                   {bookDetail?.contents}…
                 </div>
                 <div className="mt-auto flex gap-2">
+                  {/* 장바구니 담기 버튼 */}
                   <div
                     onClick={handleAddCart}
                     className="cursor-pointer flex border-1 items-center justify-center h-8 sm:h-9 w-full shrink"
@@ -168,11 +179,16 @@ export default function DetailPage() {
                     <span className="text-sm mr-1">장바구니에 담기</span>
                     <CiShoppingBasket size={24} />
                   </div>
-                  <div className="cursor-pointer border-1 h-8 w-8 sm:h-9 sm:w-9 flex-none flex items-center justify-center">
-                    <GoHeart size={20} />
-                  </div>
-                  <div className="cursor-pointer border-1 h-8 w-8 sm:h-9 sm:w-9 flex-none flex items-center justify-center">
-                    <GoHeartFill size={20} fill="oklch(74% 0.238 322.16)" />
+                  {/* 마음함 버튼 */}
+                  <div
+                    onClick={() => handleAddLike(bookDetail?.isbn)}
+                    className="cursor-pointer border-1 h-8 w-8 sm:h-9 sm:w-9 flex-none flex items-center justify-center"
+                  >
+                    {items[bookDetail?.isbn] ? (
+                      <GoHeartFill size={20} fill="oklch(64.5% 0.246 16.439)" />
+                    ) : (
+                      <GoHeart size={20} />
+                    )}
                   </div>
                 </div>
               </div>
